@@ -1,0 +1,87 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/separator.png" type="Texture" id=1]
+[ext_resource path="res://Game.gd" type="Script" id=2]
+[ext_resource path="res://Paddle/Paddle.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/right_pallete.png" type="Texture" id=4]
+[ext_resource path="res://Wall/Wall.tscn" type="PackedScene" id=5]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 10, 200 )
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Graphics" type="Node2D" parent="."]
+
+[node name="BackGround" type="ColorRect" parent="Graphics"]
+margin_right = 640.0
+margin_bottom = 400.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="Separator" type="Sprite" parent="Graphics"]
+position = Vector2( 320, 200 )
+texture = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="Graphics"]
+margin_left = 300.0
+margin_top = 10.0
+margin_right = 340.0
+margin_bottom = 24.0
+text = "0 | 0"
+align = 1
+
+[node name="BallContainer" type="Node2D" parent="."]
+
+[node name="BallSpawnLocation" type="Position2D" parent="BallContainer"]
+position = Vector2( 320, 200 )
+
+[node name="PaddleContainer" type="Node2D" parent="."]
+
+[node name="LeftPaddle" parent="PaddleContainer" instance=ExtResource( 3 )]
+position = Vector2( 30, 200 )
+
+[node name="RightPaddle" parent="PaddleContainer" instance=ExtResource( 3 )]
+position = Vector2( 610, 200 )
+paddle_location = 1
+
+[node name="Sprite" parent="PaddleContainer/RightPaddle" index="0"]
+texture = ExtResource( 4 )
+
+[node name="PaddleSpawnPosition" type="Position2D" parent="PaddleContainer"]
+position = Vector2( 0, 200 )
+
+[node name="WallContainer" type="Node2D" parent="."]
+
+[node name="Ceiling" parent="WallContainer" instance=ExtResource( 5 )]
+position = Vector2( 320, -10 )
+bouncy = true
+
+[node name="Ground" parent="WallContainer" instance=ExtResource( 5 )]
+position = Vector2( 320, 410 )
+bouncy = true
+
+[node name="LeftWall" parent="WallContainer" instance=ExtResource( 5 )]
+position = Vector2( -10, 200 )
+
+[node name="CollisionShape2D" parent="WallContainer/LeftWall" index="0"]
+shape = SubResource( 1 )
+
+[node name="RightWall" parent="WallContainer" instance=ExtResource( 5 )]
+position = Vector2( 650, 200 )
+
+[node name="CollisionShape2D" parent="WallContainer/RightWall" index="0"]
+shape = SubResource( 1 )
+
+[node name="ResetTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="ball_out" from="WallContainer/LeftWall" to="." method="_on_ball_out"]
+[connection signal="ball_out" from="WallContainer/RightWall" to="." method="_on_ball_out"]
+[connection signal="timeout" from="ResetTimer" to="." method="_on_ResetTimer_timeout"]
+
+[editable path="PaddleContainer/LeftPaddle"]
+[editable path="PaddleContainer/RightPaddle"]
+[editable path="WallContainer/LeftWall"]
+[editable path="WallContainer/RightWall"]
